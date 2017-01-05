@@ -1,0 +1,57 @@
+#/bin/sh
+
+banner_cmd=cat
+if command -v figlet >/dev/null;then
+	banner_cmd="figlet -ct"
+fi
+tick_cmd="tput bel"
+
+[ -f ~/.$0rc ] && . ~/.$0rc
+
+banner() {
+	$banner_cmd
+}
+
+countdown() {
+	i=$1
+	while [ $i != 0 ]; do
+		printf "$i\n" | banner
+		#tick
+		i=$(( i - 1 ))
+		sleep 1
+	done
+}
+
+tick() {
+	$tick_cmd
+}
+
+doubletick(){
+	tick
+	#tick;sleep 0.4;tick 
+}
+
+set -- "Jumping jacks" "Wall sit" "Push-up" "Abdominal crunch" "Step-up onto chair" "Squat" "Triceps dip on chair" "Plank" "High knees running in place" "Lunge" "Push-up and rotation" "Side Plank"
+
+[ -n "$pre_cmd" ] && $pre_command
+
+for exercise;do
+	printf "Next up\n$exercise\n" | banner
+	countdown 5
+	printf "$exercise\n" | banner
+	doubletick
+	
+	countdown 30
+	doubletick
+	printf "Now rest\n" | banner
+	countdown 5
+done
+
+printf "Well done\n" | banner
+
+[ -n "$post_cmd" ] && $post_cmd
+
+exit 0
+
+: pre_cmd="echo 'xterm*visualBell: false' | xrdb -merge"
+: post_cmd="echo 'xterm*visualBell: true' | xrdb -merge"
